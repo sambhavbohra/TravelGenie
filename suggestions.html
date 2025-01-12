@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dream Destinations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="hero">
+        <h1>Discover Your Next Adventure</h1>
+        <p>Explore breathtaking destinations around the world</p>
+    </header>
+    <div id="destinations-container">
+        <p>Loading destinations...</p>
+    </div>
+    <script>
+        // First, ensure you have the required API key
+const API_KEY = 'AIzaSyAuyU6yz4VfeCfhqjc9fTJfx7cewsK0uA4';
+
+
+
+// Updated system prompt to ensure proper JSON formatting
+const systemPrompt = `Generate a JSON array of 10 popular vacation destinations. Each destination should have a name and description. Format the response EXACTLY like this, with no additional text or markdown:
+[
+  {
+    "name": "destination name",
+    "description": "description text"
+  }
+]`;
+
+// Function to call Gemini API
+async function getVacationDestinations() {
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+    const container = document.getElementById('destinations-container');
+    
+    try {
+        const response = await fetch(`${url}?key=${API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: systemPrompt
+                    }]
+                }]
+            })
+        });
+
+        const data = await response.json();
+        
+        // Extract the text content from Gemini's response
+        const responseText = data.candidates[0].content.parts[0].text;
+        
+        // Remove any markdown backticks or 'json' text if present
+        const cleanedText = responseText.replace(/```json\n?|\n?```/g, '').trim();
+        
+        // Parse the cleaned JSON
+        let destinations;
+        try {
+            destinations = JSON.parse(cleanedText);
+        } catch (parseError) {
+            console.error('Parse error:', parseError);
+            console.log('Received text:', cleanedText);
+            throw new Error('Failed to parse API response');
+        }
+
+        // Validate the data structure
+        if (!Array.isArray(destinations) || destinations.length === 0) {
+            throw new Error('Invalid data structure received');
+        }
+
+        displayDestinations(destinations);
+    } catch (error) {
+        console.error('Error fetching destinations:', error);
+        container.innerHTML = `
+            <p class="error">
+                Error loading destinations. Please try again later.<br>
+                Error details: ${error.message}
+            </p>`;
+    }
+}
+
+// Function to display destinations in beautiful boxes
+function displayDestinations(destinations) {
+    const container = document.getElementById('destinations-container');
+    container.innerHTML = ''; // Clear existing content
+
+    destinations.forEach(destination => {
+        const box = document.createElement('div');
+        box.className = 'destination-box';
+        box.innerHTML = `
+            <h2>${destination.name}</h2>
+            <p>${destination.description}</p>
+        `;
+        container.appendChild(box);
+    });
+}
+
+// Add necessary styles
+const styles = `
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e3eeff 100%);
+        min-height: 100vh;
+    }
+
+    .hero {
+        background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                    url('https://images.unsplash.com/photo-1488085061387-422e29b40080?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        text-align: center;
+        padding: 100px 20px;
+        margin-bottom: 40px;
+    }
+
+    .hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 3.5rem;
+        margin: 0;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        margin: 0;
+        opacity: 0.9;
+    }
+
+    #destinations-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+        padding: 20px;
+    }
+
+    .destination-box {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .destination-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
+    }
+
+    .destination-box:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+
+    .destination-box h2 {
+        color: #1a1a1a;
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .destination-box p {
+        color: #666;
+        line-height: 1.8;
+        font-size: 1rem;
+    }
+
+    .error {
+        grid-column: 1 / -1;
+        color: #e74c3c;
+        text-align: center;
+        padding: 30px;
+        background: #fde8e8;
+        border-radius: 15px;
+        margin: 20px;
+        border: 1px solid #fab5b5;
+    }
+
+    @media (max-width: 768px) {
+        #destinations-container {
+            grid-template-columns: 1fr;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+
+        .destination-box {
+            padding: 20px;
+        }
+    }
+
+    /* Loading animation */
+    @keyframes pulse {
+        0% { opacity: 0.6; }
+        50% { opacity: 1; }
+        100% { opacity: 0.6; }
+    }
+
+    #destinations-container p:first-child {
+        grid-column: 1 / -1;
+        text-align: center;
+        font-size: 1.2rem;
+        color: #666;
+        animation: pulse 1.5s infinite;
+    }
+`;
+
+// Add styles to document
+const styleSheet = document.createElement('style');
+styleSheet.textContent = styles;
+document.head.appendChild(styleSheet);
+
+// Call the function when page loads
+document.addEventListener('DOMContentLoaded', getVacationDestinations);
+    </script>
+</body>
+</html>
