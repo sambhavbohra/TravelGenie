@@ -11,3 +11,74 @@ body{
     font-weight: 900;
     background-color: rgb(220, 230, 192);
 }
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .main-section {
+            position: relative;
+            height: 100vh;
+            background: url('https://source.unsplash.com/1920x1080/?travel,nature') no-repeat center center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-align: center;
+        }
+
+        .main-content {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .main-content h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+
+        .main-content p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .main-content .cta-button {
+            display: inline-block;
+            padding: 10px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #fff;
+            background: #ff6f61;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .main-content .cta-button:hover {
+            background: #ff4b3a;
+            transform: scale(1.05);
+        }
+
+        .main-content .cta-button:active {
+            transform: scale(1);
+        }
+
+        @media (max-width: 768px) {
+            .main-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .main-content p {
+                font-size: 1rem;
+            }
+
+            .main-content .cta-button {
+                font-size: 1rem;
+                padding: 8px 20px;
+            }
+        }
