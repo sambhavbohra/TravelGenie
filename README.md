@@ -41,6 +41,3 @@ To view or contribute to the project:
 
 ## Contributions
 Contributions are welcome! This project is a learning initiative, and new features will be added as we explore and grow with guidance from the OSS Core Committee.
-
-## License
-This project is open-source and available under the [MIT License](LICENSE).
