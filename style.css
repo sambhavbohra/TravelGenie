@@ -1,0 +1,13 @@
+body{
+    margin: 0px;
+}
+
+
+.footer-copyright{
+    border: 2px solid black;
+    text-align: center;
+    margin-top: 100vh;
+    font-size: 350%;
+    font-weight: 900;
+    background-color: rgb(220, 230, 192);
+}
